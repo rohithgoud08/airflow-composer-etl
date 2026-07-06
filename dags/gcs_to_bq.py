@@ -1,3 +1,5 @@
+# Deployed using GitHub Actions CI/CD
+
 from datetime import datetime
 
 from airflow import DAG
