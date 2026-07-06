@@ -1,0 +1,29 @@
+name: Deploy DAGs to Cloud Composer
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "dags/**"
+      - ".github/workflows/deploy-dags.yml"
+
+jobs:
+  deploy-dags:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy DAG files to Composer bucket
+        run: |
+          gcloud storage rsync dags "${{ secrets.COMPOSER_DAGS_BUCKET }}" --recursive --delete-unmatched-destination-objects
